@@ -1,6 +1,7 @@
 package test;
 
 import calculator.derivatives.*;
+import calculator.utility.FiniteDifference;
 import option.*;
 import org.junit.*;
 import underlying.*;
