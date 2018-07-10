@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class FiniteDifference implements Serializable{
     private int numOfTimePoints = 501;
-    private int numOfLowerPricePoints = 250;
+    private int numOfLowerPricePoints = 100;
     private double[] pricePoints;
     private double[] timePoints;
     private double diffPrice;
@@ -122,5 +122,7 @@ public class FiniteDifference implements Serializable{
         }
         return new Matrix(matrix);
     }
+
+
 
 }
