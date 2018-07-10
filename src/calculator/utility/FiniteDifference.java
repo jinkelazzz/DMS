@@ -1,5 +1,6 @@
 package calculator.utility;
 
+import flanagan.math.DeepCopy;
 import flanagan.math.Matrix;
 import option.BaseSingleOption;
 import java.io.Serializable;
@@ -100,6 +101,28 @@ public class FiniteDifference implements Serializable{
      * 是一个三对角矩阵,形如[[b0,c0,0,...,0],[a1,b1,c1,...,0],...,[0,...,0,an,bn]];
      */
     public Matrix paramsMatrix(BaseSingleOption option) {
+        double[][] params = paramsArray(option);
+        double[] a = params[0];
+        double[] b = params[1];
+        double[] c = params[2];
+        int n = a.length;
+        double[][] matrix = new double[n][n];
+        //主对角系数b
+        for (int j = 0; j < n; j++) {
+            matrix[j][j] = b[j];
+        }
+        //上对角系数c
+        for (int j = 0; j < n - 1; j++) {
+            matrix[j][j + 1] = c[j];
+        }
+        //下对角系数a
+        for (int j = 1; j < n; j++) {
+            matrix[j][j - 1] = a[j];
+        }
+        return new Matrix(matrix);
+    }
+
+    private double[][] paramsArray(BaseSingleOption option) {
         if(!hasGeneratedPoints) {
             generateFiniteDifferencePoints(option);
         }
@@ -107,22 +130,19 @@ public class FiniteDifference implements Serializable{
         double mu = option.getUnderlying().getCostOfCarry();
         double r = option.getUnderlying().getRiskFreeRate();
         int n = pricePoints.length;
-        double[][] matrix = new double[n][n];
-        //主对角系数b
+        double[] b = new double[n];
         for (int j = 0; j < n; j++) {
-            matrix[j][j] = 1 + Math.pow(vol * j, 2) * diffTime + r * diffTime;
+            b[j] = 1 + Math.pow(vol * j, 2) * diffTime + r * diffTime;
         }
-        //上对角系数c
-        for (int j = 0; j < n - 1; j++) {
-            matrix[j][j + 1] = -mu * j * diffTime / 2 - Math.pow(vol * j, 2) * diffTime / 2;
+        double[] a = new double[n];
+        for (int j = 0; j < n; j++) {
+            a[j] = mu * j * diffTime / 2 - Math.pow(vol * j, 2) * diffTime / 2;
         }
-        //下对角系数a
-        for (int j = 1; j < n; j++) {
-            matrix[j][j - 1] = mu * j * diffTime / 2 - Math.pow(vol * j, 2) * diffTime / 2;
+        double[] c = new double[n];
+        for (int j = 0; j < n; j++) {
+            c[j] = -mu * j * diffTime / 2 - Math.pow(vol * j, 2) * diffTime / 2;
         }
-        return new Matrix(matrix);
+        return new double[][] {a, b, c};
     }
-
-
 
 }
