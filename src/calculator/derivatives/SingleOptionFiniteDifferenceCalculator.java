@@ -4,6 +4,7 @@ import calculator.utility.CalculateUtil;
 import calculator.utility.CalculatorError;
 import calculator.utility.FiniteDifference;
 import flanagan.math.Matrix;
+import option.EuropeanOption;
 
 import java.io.Serializable;
 
@@ -130,5 +131,13 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
     @Override
     public void calculateRho() {
 
+    }
+
+    public double europeanOptionError() {
+        EuropeanOption europeanOption = new EuropeanOption(option);
+        this.setOption(europeanOption);
+        calculatePrice();
+        this.setOption(option);
+        return europeanOption.bsm() - this.getResult();
     }
 }
