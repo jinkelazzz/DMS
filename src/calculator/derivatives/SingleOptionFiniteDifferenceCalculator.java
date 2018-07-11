@@ -133,11 +133,11 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
 
     }
 
-    public double europeanOptionError() {
+    public double getEuropeanOptionError() {
         EuropeanOption europeanOption = new EuropeanOption(option);
-        this.setOption(europeanOption);
-        calculatePrice();
-        this.setOption(option);
-        return europeanOption.bsm() - this.getResult();
+        SingleOptionFiniteDifferenceCalculator calculator = new SingleOptionFiniteDifferenceCalculator();
+        calculator.setOption(europeanOption);
+        calculator.calculatePrice();
+        return europeanOption.bsm() - calculator.getResult();
     }
 }

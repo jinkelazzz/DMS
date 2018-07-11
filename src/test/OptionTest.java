@@ -63,6 +63,9 @@ public class OptionTest {
         americanOption.setVanillaOptionParams(vanillaOptionParams);
         finiteDifferenceCalculator.setOption(americanOption);
         finiteDifferenceCalculator.calculatePrice();
+        double error = finiteDifferenceCalculator.getEuropeanOptionError();
+        System.out.println(error);
+        System.out.println(finiteDifferenceCalculator.getResult() + error);
         System.out.println(finiteDifferenceCalculator.getResult());
         Assert.assertEquals(0, finiteDifferenceCalculator.getError().getIndex());
     }

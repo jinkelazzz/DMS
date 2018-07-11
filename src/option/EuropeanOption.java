@@ -16,6 +16,9 @@ public class EuropeanOption extends BaseSingleOption implements Serializable {
     public EuropeanOption() {}
 
     public EuropeanOption(BaseSingleOption option) {
+        if(option instanceof BinaryBarrierOption) {
+            ((BinaryBarrierOption) option).refreshOptionType();
+        }
         this.setUnderlying((BaseUnderlying) DeepCopy.copy(option.getUnderlying()));
         this.setVanillaOptionParams((VanillaOptionParams) DeepCopy.copy(option.getVanillaOptionParams()));
         this.setVolatilitySurface((VolatilitySurface) DeepCopy.copy(option.getVolatilitySurface()));

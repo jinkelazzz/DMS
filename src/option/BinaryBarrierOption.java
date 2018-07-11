@@ -129,7 +129,7 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
     }
 
     private double cash = 1.0;
-    private String payoffType = PAYOFF_TYPE_HIT;
+
     private BarrierOptionParams barrierOptionParams;
 
     public double getCash() {
@@ -138,14 +138,6 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
 
     public void setCash(double cash) {
         this.cash = cash;
-    }
-
-    public String getPayoffType() {
-        return payoffType;
-    }
-
-    public void setPayoffType(String payoffType) {
-        this.payoffType = payoffType;
     }
 
     public BarrierOptionParams getBarrierOptionParams() {
@@ -194,7 +186,7 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
 
     @Override
     public double monteCarloPrice(double[] pricePath) {
-        if(PAYOFF_TYPE_HIT.equals(payoffType)) {
+        if(barrierOptionParams.isPayAtHit()) {
             double hitTime = hitBarrierTime(pricePath);
             if(!isHit(pricePath)) {
                 return 0;
@@ -214,7 +206,7 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
     public double bsm() {
         BinaryBarrierCalculator calculator = new BinaryBarrierCalculator();
         calculator.setOption(this);
-        if(PAYOFF_TYPE_HIT.equals(payoffType)) {
+        if(barrierOptionParams.isPayAtHit()) {
             return calculator.a() * cash;
         } else {
             if(barrierOptionParams.isIn()) {

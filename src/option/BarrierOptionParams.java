@@ -11,7 +11,7 @@ public class BarrierOptionParams implements Serializable{
     private double barrierPrice;
     private String barrierType;
     private String barrierDirection;
-
+    private String payoffType = BaseOption.PAYOFF_TYPE_HIT;
     //下面是双障碍期权参数
 
     private double upperBarrierPrice;
@@ -19,6 +19,32 @@ public class BarrierOptionParams implements Serializable{
     private double upperCurve = 0.0;
     private double lowerCurve = 0.0;
 
+    private int maxIterationTimes = 50;
+    private double tolerance = 1e-8;
+
+    public int getMaxIterationTimes() {
+        return maxIterationTimes;
+    }
+
+    public void setMaxIterationTimes(int maxIterationTimes) {
+        this.maxIterationTimes = maxIterationTimes;
+    }
+
+    public double getTolerance() {
+        return tolerance;
+    }
+
+    public void setTolerance(double tolerance) {
+        this.tolerance = tolerance;
+    }
+
+    public String getPayoffType() {
+        return payoffType;
+    }
+
+    public void setPayoffType(String payoffType) {
+        this.payoffType = payoffType;
+    }
 
     public String getBarrierDirection() {
         return barrierDirection;
@@ -90,6 +116,10 @@ public class BarrierOptionParams implements Serializable{
 
     boolean isIn() {
         return BaseOption.BARRIER_TYPE_IN.equals(barrierType);
+    }
+
+    boolean isPayAtHit() {
+        return BaseOption.PAYOFF_TYPE_HIT.equals(payoffType);
     }
 
     /**

@@ -145,15 +145,13 @@ class DoubleBarrierCalculator {
         return -k * option.getDiscountValueByRiskFreeRate() * (q1 - q2);
     }
 
+    /**
+     * @return 敲出的价格
+     */
     public double outPrice() {
-        int indexOfOptionType;
-        int maxIteration = 50;
-        double tol = 1e-8;
-        if(option.getVanillaOptionParams().isOptionTypeCall()) {
-            indexOfOptionType = 1;
-        } else {
-            indexOfOptionType = -1;
-        }
+        int indexOfOptionType = option.getVanillaOptionParams().indexOfOptionType();
+        int maxIteration = option.getBarrierOptionParams().getMaxIterationTimes();
+        double tol = option.getBarrierOptionParams().getTolerance();
         double price = indexOfOptionType * (part1(0) + part2(0));
         double positiveAdd;
         double negativeAdd;

@@ -220,10 +220,10 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
             binaryBarrierOption.getVanillaOptionParams().setVolatility(volAtBarrier());
 
             if(getBarrierOptionParams().isIn()) {
-                binaryBarrierOption.setPayoffType(PAYOFF_TYPE_EXPIRE);
+                binaryBarrierOption.getBarrierOptionParams().setPayoffType(PAYOFF_TYPE_EXPIRE);
             } else {
                 //敲出期权 敲出时就支付;
-                binaryBarrierOption.setPayoffType(PAYOFF_TYPE_HIT);
+                binaryBarrierOption.getBarrierOptionParams().setPayoffType(PAYOFF_TYPE_HIT);
             }
             realRebate = binaryBarrierOption.bsm();
         }

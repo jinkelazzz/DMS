@@ -96,7 +96,7 @@ public class Sabr {
     }
 
     private double solveAlpha() {
-        //solve cubic * alpha^3 + quadratic * alpha^2 + linear * alpha + utility = 0;
+        //solve cubic * alpha^3 + quadratic * alpha^2 + linear * alpha + constant = 0;
         double cubic = polynomialParams()[3];
         double quadratic = polynomialParams()[2];
         double linear = polynomialParams()[1];

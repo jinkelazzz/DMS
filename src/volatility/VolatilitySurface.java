@@ -1,6 +1,7 @@
 package volatility;
 
 import adjusted.european.option.Heston;
+import adjusted.european.option.Sabr;
 import calculator.utility.Interpolation;
 import calculator.derivatives.SingleOptionAnalysisCalculator;
 import option.EuropeanOption;
@@ -98,13 +99,31 @@ public class VolatilitySurface implements Serializable {
         option.setHestonParams(heston);
         option.setUnderlying(underlying);
         double s = underlying.getSpotPrice();
+        option.getVanillaOptionParams().setVolatility(initialVolatility);
         for (int i = 0; i < moneynessList.length; i++) {
             double moneyness = moneynessList[i];
             for (int j = 0; j < timeList.length; j++) {
-                option.getVanillaOptionParams().setVolatility(initialVolatility);
                 option.getVanillaOptionParams().setStrikePrice(s * moneyness);
                 option.getVanillaOptionParams().setTargetPrice(timeList[j]);
                 volSurface[i][j] = hestonImpliedVolatility(option);
+            }
+        }
+        return this;
+    }
+
+    public VolatilitySurface sabrVolatilitySurface(Sabr sabr, BaseUnderlying underlying, double initialVolatility) {
+        volSurface = new double[moneynessList.length][timeList.length];
+        EuropeanOption option = new EuropeanOption();
+        option.setUnderlying(underlying);
+        option.getVanillaOptionParams().setVolatility(initialVolatility);
+        double s = underlying.getSpotPrice();
+        for (int i = 0; i < moneynessList.length; i++) {
+            double moneyness = moneynessList[i];
+            for (int j = 0; j < timeList.length; j++) {
+                option.getVanillaOptionParams().setStrikePrice(s * moneyness);
+                option.getVanillaOptionParams().setTargetPrice(timeList[j]);
+                sabr.setOption(option);
+                volSurface[i][j] = sabr.sabrVolatility();
             }
         }
         return this;
