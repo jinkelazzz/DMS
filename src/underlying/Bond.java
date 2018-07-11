@@ -28,15 +28,7 @@ class CountDaysCalculator {
         return (endDateTimeInMillis - startDateTimeInMillis) / MILLION_SEC_ONE_DAY;
     }
 
-    /**
-     *
-     * @param startDate
-     * @param endDate
-     * @param daysInOneMonth
-     * @param daysInOneYear
-     * @return
-     */
-    private long getDays(Calendar startDate, Calendar endDate, int daysInOneMonth, int daysInOneYear) {
+    private long get30DaysIn360(Calendar startDate, Calendar endDate) {
         int startYear = startDate.get(Calendar.YEAR);
         int startMonth = startDate.get(Calendar.MONTH);
         int startDay = startDate.get(Calendar.DAY_OF_MONTH);
@@ -45,15 +37,16 @@ class CountDaysCalculator {
         int endMonth = endDate.get(Calendar.MONTH);
         int endDay = endDate.get(Calendar.DAY_OF_MONTH);
 
+        int daysInOneYear = 360;
+        int daysInOneMonth = 30;
+
+        startDay = Math.min(daysInOneMonth, startDay);
+
+        if(endDay > daysInOneMonth && startDay == daysInOneMonth) {
+            endDay = daysInOneMonth;
+        }
+
         return (endYear - startYear) * daysInOneYear + (endMonth - startMonth) * daysInOneMonth + (endDay - startDay);
-    }
-
-    private long get30DaysIn360(Calendar startDate, Calendar endDate) {
-        return getDays(startDate, endDate, 30, 360);
-    }
-
-    private long get30DaysIn365(Calendar startDate, Calendar endDate) {
-        return getDays(startDate, endDate, 30, 365);
     }
 
     public double actAct() {
@@ -66,10 +59,6 @@ class CountDaysCalculator {
 
     public double thirty360() {
         return get30DaysIn360(previousPayDay, today) / get30DaysIn360(previousPayDay, nextPayDay);
-    }
-
-    public double act365() {
-        return getActDays(previousPayDay, today) / get30DaysIn365(previousPayDay, nextPayDay);
     }
 
     public double timeOfYears(Calendar startDate, Calendar endDate) {
@@ -86,7 +75,6 @@ public class Bond implements Serializable{
      */
     public static final String COUNT_DAYS_METHOD_ACT_ACT = "act/act";
     public static final String COUNT_DAYS_METHOD_ACT_360 = "act/360";
-    public static final String COUNT_DAYS_METHOD_ACT_365 = "act/365";
     public static final String COUNT_DAYS_METHOD_30_360 = "30/360";
 
     /**
@@ -240,9 +228,6 @@ public class Bond implements Serializable{
             }
             case COUNT_DAYS_METHOD_30_360 : {
                 return calculator.thirty360() * interest;
-            }
-            case COUNT_DAYS_METHOD_ACT_365 : {
-                return calculator.act365() * interest;
             }
             case COUNT_DAYS_METHOD_ACT_360 : {
                 return calculator.act360() * interest;
