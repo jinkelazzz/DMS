@@ -1,12 +1,12 @@
 package calculator.derivatives;
 
-import option.BaseSingleOption;
 import calculator.utility.NewtonIterationParams;
+import option.BaseSingleOption;
 
 /**
  * @author liangcy
  */
-public abstract class BaseSingleOptionCalculator extends BaseCalculator{
+public abstract class BaseSingleOptionCalculator extends BaseCalculator {
 
     BaseSingleOption option;
 
@@ -20,6 +20,7 @@ public abstract class BaseSingleOptionCalculator extends BaseCalculator{
     public BaseSingleOptionCalculator() {
 
     }
+
     public BaseSingleOptionCalculator(BaseSingleOption option) {
         setOption(option);
     }
@@ -80,7 +81,6 @@ public abstract class BaseSingleOptionCalculator extends BaseCalculator{
      * 计算1个BP的Rho
      */
     public abstract void calculateRho();
-
 
 
 }

@@ -2,8 +2,8 @@ package volatility;
 
 import adjusted.european.option.Heston;
 import adjusted.european.option.Sabr;
-import calculator.utility.Interpolation;
 import calculator.derivatives.SingleOptionAnalysisCalculator;
+import calculator.utility.Interpolation;
 import option.EuropeanOption;
 import underlying.BaseUnderlying;
 
@@ -43,7 +43,8 @@ public class VolatilitySurface implements Serializable {
         this.moneynessList = moneynessList;
     }
 
-    public VolatilitySurface() {}
+    public VolatilitySurface() {
+    }
 
     public String getInterpolationMethod() {
         return interpolationMethod;

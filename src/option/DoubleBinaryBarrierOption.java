@@ -1,5 +1,7 @@
 package option;
 
+import java.io.Serializable;
+
 class DoubleBinaryBarrierOptionCalculator {
     private DoubleBinaryBarrierOption option;
 
@@ -63,7 +65,7 @@ class DoubleBinaryBarrierOptionCalculator {
         for (int i = 1; i <= maxIteration; i++) {
             double add = p1(i) * p2(i) * p3(i) * p4(i);
             price = price + add;
-            if(Math.abs(add) < tol) {
+            if (Math.abs(add) < tol) {
                 return price;
             }
         }
@@ -96,11 +98,11 @@ class DoubleBinaryBarrierOptionCalculator {
     }
 
     /**
+     * @return option price;
      * @reference Hui (1996)
      * 原文是触碰到下障碍给cash, 触碰到上障碍敲出;
      * 这里计算触碰到下障碍给cash, 触碰到上障碍敲出 和 触碰到上障碍给cash, 触碰到下障碍敲出的两个期权之和;
      * 也就是只要触碰到障碍就会给cash;
-     * @return option price;
      */
     public double priceAtHit() {
         double u = option.getBarrierOptionParams().getUpperBarrierPrice();
@@ -118,7 +120,7 @@ class DoubleBinaryBarrierOptionCalculator {
             add2 = q2(i, l, u) * q3(i, l, u);
             price2 = q1(u) * (add2 + q4(l, u));
             price = price + price1 + price2;
-            if(Math.abs(add1 + add2) < tol) {
+            if (Math.abs(add1 + add2) < tol) {
                 return option.getCash() * price;
             }
         }
@@ -127,14 +129,13 @@ class DoubleBinaryBarrierOptionCalculator {
 }
 
 
-
 /**
+ * @author liangcy
  * @reference Hui (1996)
  * 如果是pay at hit, 就是触碰到障碍就给cash;
  * 如果是pay at expire, 到期根据是否触碰和敲入敲出给cash;
- * @author liangcy
  */
-public class DoubleBinaryBarrierOption extends BaseSingleOption{
+public class DoubleBinaryBarrierOption extends BaseSingleOption implements Serializable {
     private double cash = 1.0;
     private BarrierOptionParams barrierOptionParams = new BarrierOptionParams();
 
@@ -158,11 +159,11 @@ public class DoubleBinaryBarrierOption extends BaseSingleOption{
     public double bsm() {
         DoubleBinaryBarrierOptionCalculator calculator = new DoubleBinaryBarrierOptionCalculator();
         calculator.setOption(this);
-        if(barrierOptionParams.isPayAtHit()) {
+        if (barrierOptionParams.isPayAtHit()) {
             return calculator.priceAtHit();
         } else {
             double outPrice = calculator.outPriceAtExpire();
-            if(barrierOptionParams.isIn()) {
+            if (barrierOptionParams.isIn()) {
                 return cash * getDiscountValueByRiskFreeRate() - outPrice;
             } else {
                 return outPrice;

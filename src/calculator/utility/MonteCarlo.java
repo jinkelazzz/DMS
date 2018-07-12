@@ -20,7 +20,6 @@ public class MonteCarlo {
     private double monteCarloErrorMult = 3.0;
 
 
-
     public MonteCarlo() {
 
     }

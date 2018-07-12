@@ -3,6 +3,8 @@ package underlying;
 import java.io.Serializable;
 
 /**
+ * 现货类 也可以是指数等
+ *
  * @author liangcy
  */
 public class Spot extends BaseUnderlying implements Serializable {

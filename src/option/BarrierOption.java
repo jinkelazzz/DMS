@@ -78,15 +78,14 @@ class BarrierCalculator {
     }
 
     /**
-     * @return
-     * (d1 + e1 < 0 && call) || (d1 + e1 > 0 && put)
+     * @return (d1 + e1 < 0 & & call) || (d1 + e1 > 0 && put)
      */
     private boolean useShortExpression() {
         return (d1() + e1() < 0) == (option.getVanillaOptionParams().isOptionTypeCall());
     }
 
     public int index() {
-        if(useShortExpression()) {
+        if (useShortExpression()) {
             return 1;
         } else {
             return 0;
@@ -144,9 +143,10 @@ class BarrierCalculator {
  * @author liangcy
  * 障碍期权
  */
-public class BarrierOption extends BaseSingleOption implements Serializable{
+public class BarrierOption extends BaseSingleOption implements Serializable {
 
-    public BarrierOption() {}
+    public BarrierOption() {
+    }
 
     private BarrierOptionParams barrierOptionParams;
     /**
@@ -178,7 +178,7 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
     @Override
     public double monteCarloPrice(double[] pricePath) {
         EuropeanOption option = new EuropeanOption(this);
-        if(getBarrierOptionParams().isIn()) {
+        if (getBarrierOptionParams().isIn()) {
             for (double price : pricePath) {
                 if (getBarrierOptionParams().isTouchSingleBarrier(price)) {
                     return option.monteCarloPrice(pricePath);
@@ -188,7 +188,7 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
         } else {
             double[] timePoints = MonteCarlo.getTimePoints(getVanillaOptionParams().getTimeRemaining(), pricePath);
             for (int i = 0; i < pricePath.length; i++) {
-                if(getBarrierOptionParams().isTouchSingleBarrier(pricePath[i])) {
+                if (getBarrierOptionParams().isTouchSingleBarrier(pricePath[i])) {
                     double r = getUnderlying().getRiskFreeRate();
                     double hitTime = timePoints[i];
                     return rebate * Math.exp(-r * hitTime);
@@ -199,11 +199,10 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
     }
 
     /**
-     *
      * @return 障碍价的波动率
      */
     double volAtBarrier() {
-        if(null == getVolatilitySurface()) {
+        if (null == getVolatilitySurface()) {
             return getVanillaOptionParams().getVolatility();
         }
         double h = getBarrierOptionParams().getBarrierPrice();
@@ -214,12 +213,12 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
 
     private double getRealRebate() {
         double realRebate = 0;
-        if(rebate > 0) {
+        if (rebate > 0) {
             BinaryBarrierOption binaryBarrierOption = new BinaryBarrierOption(this);
             binaryBarrierOption.getBarrierOptionParams().swapInOut();
             binaryBarrierOption.getVanillaOptionParams().setVolatility(volAtBarrier());
 
-            if(getBarrierOptionParams().isIn()) {
+            if (getBarrierOptionParams().isIn()) {
                 binaryBarrierOption.getBarrierOptionParams().setPayoffType(PAYOFF_TYPE_EXPIRE);
             } else {
                 //敲出期权 敲出时就支付;
@@ -232,7 +231,7 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
 
     @Override
     public double bsm() {
-        if(barrierOptionParams.isIn()) {
+        if (barrierOptionParams.isIn()) {
             return bsmIn() + getRealRebate();
         } else {
             return europeanVanillaPrice() - bsmIn() + getRealRebate();
@@ -241,17 +240,18 @@ public class BarrierOption extends BaseSingleOption implements Serializable{
 
     /**
      * 只计算敲入期权的bsm价格, 敲出期权用平价公式;
+     *
      * @return 敲入期权的bsm价格
      */
     private double bsmIn() {
         //敲入期权如果已敲入, 按普通欧式期权计算;
-        if(getBarrierOptionParams().isTouchSingleBarrier(getUnderlying().getSpotPrice())) {
+        if (getBarrierOptionParams().isTouchSingleBarrier(getUnderlying().getSpotPrice())) {
             return europeanVanillaPrice();
         }
         BarrierCalculator calculator = new BarrierCalculator();
         calculator.setOption(this);
         //(up&&call) || (down&&put)
-        if(barrierOptionParams.isUp() == getVanillaOptionParams().isOptionTypeCall()) {
+        if (barrierOptionParams.isUp() == getVanillaOptionParams().isOptionTypeCall()) {
             return calculator.a() + calculator.d() * calculator.index();
         } else {
             return calculator.c() + calculator.b() * calculator.index();

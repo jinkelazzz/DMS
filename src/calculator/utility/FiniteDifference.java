@@ -1,14 +1,14 @@
 package calculator.utility;
 
-import flanagan.math.DeepCopy;
 import flanagan.math.Matrix;
 import option.BaseSingleOption;
+
 import java.io.Serializable;
 
 /**
  * @author liangcy
  */
-public class FiniteDifference implements Serializable{
+public class FiniteDifference implements Serializable {
     private int numOfTimePoints = 501;
     private int numOfLowerPricePoints = 100;
     private double[] pricePoints;
@@ -16,7 +16,6 @@ public class FiniteDifference implements Serializable{
     private double diffPrice;
     private double diffTime;
     private boolean hasGeneratedPoints = false;
-
 
 
     public void setNumOfTimePoints(int numOfTimePoints) {
@@ -54,7 +53,6 @@ public class FiniteDifference implements Serializable{
     }
 
 
-
     /**
      * @param option
      */
@@ -71,6 +69,7 @@ public class FiniteDifference implements Serializable{
 
     /**
      * 生成时间点, 从0到T;
+     *
      * @param option
      */
     private void generateTimePoints(BaseSingleOption option) {
@@ -123,7 +122,7 @@ public class FiniteDifference implements Serializable{
     }
 
     private double[][] paramsArray(BaseSingleOption option) {
-        if(!hasGeneratedPoints) {
+        if (!hasGeneratedPoints) {
             generateFiniteDifferencePoints(option);
         }
         double vol = option.getVanillaOptionParams().getVolatility();
@@ -142,7 +141,7 @@ public class FiniteDifference implements Serializable{
         for (int j = 0; j < n; j++) {
             c[j] = -mu * j * diffTime / 2 - Math.pow(vol * j, 2) * diffTime / 2;
         }
-        return new double[][] {a, b, c};
+        return new double[][]{a, b, c};
     }
 
 }

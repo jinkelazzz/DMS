@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author liangcy
  */
-public abstract class BaseOption implements Serializable{
+public abstract class BaseOption implements Serializable {
     /**
      * 期权类型: 看涨/看跌
      */
@@ -42,12 +42,14 @@ public abstract class BaseOption implements Serializable{
 
     /**
      * 最简单的解析解统称 bsm;
+     *
      * @return option price (每个option都至少应有一个解析解);
      */
     public abstract double bsm();
 
     /**
      * 打印参数
+     *
      * @return
      */
     @Override

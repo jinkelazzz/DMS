@@ -16,7 +16,8 @@ public class Future extends BaseUnderlying implements Serializable {
         this.setDividendRate(riskFreeRate);
     }
 
-    private void doNothing() { }
+    private void doNothing() {
+    }
 
     @Override
     public void setDividendRate(double dividendRate) {

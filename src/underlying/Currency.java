@@ -7,14 +7,15 @@ import java.io.Serializable;
  */
 public class Currency extends BaseUnderlying implements Serializable {
 
-    public Currency() {}
+    public Currency() {
+    }
 
     @Override
     public String toString() {
         return "Underlying type: currency" + sep +
                 "spot price:" + getSpotPrice() + sep +
-                "risk-free rate:" + getRiskFreeRate() + sep +
-                "dividend rate:" + getDividendRate();
+                "native risk-free rate:" + getRiskFreeRate() + sep +
+                "foreign risk-free rate:" + getDividendRate();
     }
 
     public Currency reverse() {

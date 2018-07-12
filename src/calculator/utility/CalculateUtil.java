@@ -25,6 +25,7 @@ public class CalculateUtil {
     /**
      * 计算正态分布累计密度函数的子函数.
      * (((an * x + a0) * x + a1)...) / ((b0 * x + b1)...)
+     *
      * @param a 分子向量, 比分母向量长1;
      * @param b 分母向量;
      * @param x 乘数;
@@ -43,6 +44,7 @@ public class CalculateUtil {
 
     /**
      * 计算正态分布累计密度函数的子函数
+     *
      * @param x
      * @return
      */
@@ -53,14 +55,13 @@ public class CalculateUtil {
     }
 
     /**
+     * @param x 积分上界;
+     * @return 正态分布累计密度函数, 从-∞积分到x;
      * @reference :
      * Cody, W. D. (1993).
      * ALGORITHM 715: SPECFUN - A Portable FORTRAN Package of
      * Special Function Routines and Test Drivers".
      * ACM Transactions on Mathematical Software. 19, 22-32.
-     *
-     * @param x 积分上界;
-     * @return 正态分布累计密度函数, 从-∞积分到x;
      */
     public static double normalCDF(double x) {
         final double[] a = {2.2352520354606839287, 161.02823106855587881, 1067.6894854603709582, 18154.981253343561249,
@@ -85,7 +86,7 @@ public class CalculateUtil {
         double result;
         double xsq;
         if (y <= threshold) {
-            if(y > ConstantNumber.EPS) {
+            if (y > ConstantNumber.EPS) {
                 xsq = x * x;
                 result = x * rollMultiplyDivide(a, b, xsq) + 0.5;
             } else {
@@ -123,12 +124,11 @@ public class CalculateUtil {
     }
 
     /**
-     * @reference
-     * Alan Genz
-     * @param x 积分上界
-     * @param y 积分上界
+     * @param x   积分上界
+     * @param y   积分上界
      * @param rho 相关系数
      * @return 二元正态分布累计密度函数值
+     * @reference Alan Genz
      */
     public static double binormalCDF(double x, double y, double rho) {
         //Gauss Legendre Points and Weights, n = 3, 6, 10;
@@ -242,25 +242,25 @@ public class CalculateUtil {
     }
 
     /**
-     *
      * @param x 向量
      * @return 以x为列向量的矩阵
      */
     public static Matrix generateOneColMatrix(double[] x) {
-        return new Matrix(new double[][] {x}).transpose();
+        return new Matrix(new double[][]{x}).transpose();
     }
 
     /**
      * 对value进行相对宽度为diff的中间差分。
+     *
      * @param value 被差分的值
-     * @param diff 宽度,正数
+     * @param diff  宽度,正数
      * @return
      */
     public static double[] midDiffValue(double value, double diff) {
         double[] result = new double[2];
         double halfDiff = diff / 2;
 
-        if(value == 0) {
+        if (value == 0) {
             result[0] = -halfDiff;
             result[1] = halfDiff;
         } else {
@@ -274,14 +274,15 @@ public class CalculateUtil {
 
     /**
      * 对value进行相对宽度为diff的向后差分。
+     *
      * @param value 被差分的值
-     * @param diff 宽度,正数
+     * @param diff  宽度,正数
      * @return
      */
     public static double[] backwardDiffValue(double value, double diff) {
         double[] result = new double[2];
 
-        if(value == 0) {
+        if (value == 0) {
             result[0] = -diff;
             result[1] = value;
         } else {

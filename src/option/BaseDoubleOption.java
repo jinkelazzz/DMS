@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @author liangcy
  */
-public abstract class BaseDoubleOption extends BaseOption implements Serializable{
+public abstract class BaseDoubleOption extends BaseOption implements Serializable {
     private BaseSingleOption option1;
     private BaseSingleOption option2;
     /**

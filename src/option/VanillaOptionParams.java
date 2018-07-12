@@ -2,6 +2,7 @@ package option;
 
 import calculator.utility.ConstantString;
 import flanagan.math.DeepCopy;
+
 import java.io.Serializable;
 
 /**
@@ -88,7 +89,7 @@ public class VanillaOptionParams implements Serializable {
     }
 
     public int indexOfOptionType() {
-        if(isOptionTypeCall()) {
+        if (isOptionTypeCall()) {
             return 1;
         } else {
             return -1;

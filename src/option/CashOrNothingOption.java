@@ -4,6 +4,7 @@ import calculator.utility.CalculateUtil;
 
 /**
  * 现金或空手期权
+ *
  * @author liangcy
  */
 public class CashOrNothingOption extends BaseSingleOption {
@@ -19,12 +20,13 @@ public class CashOrNothingOption extends BaseSingleOption {
 
     /**
      * 判断是否行权
+     *
      * @param s 期末价格
      * @return 1(行权), 0(不行权);
      */
     private double indexOfExercise(double s) {
         double k = getVanillaOptionParams().getStrikePrice();
-        if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (getVanillaOptionParams().isOptionTypeCall()) {
             return Math.max(Math.signum(s - k), 0);
         } else {
             return Math.max(Math.signum(k - s), 0);

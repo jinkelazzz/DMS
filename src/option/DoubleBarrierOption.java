@@ -60,9 +60,8 @@ class DoubleBarrierCalculator {
     }
 
     /**
-     *
      * @param index 1, 2, 3, 4;
-     * @param i iteration number;
+     * @param i     iteration number;
      * @return
      */
     private double[] multiOfLogPrice(int index, int i) {
@@ -71,7 +70,7 @@ class DoubleBarrierCalculator {
         // index of s; (1, 2, 3, 4)->(1, 1, -1, -1)
         indexes[0] = (index <= 2 ? 1 : -1);
         // index of k; (1, 2, 3, 4)->(-1, 0, -1, 0) or (0, -1, 0, -1)
-        if(option.getVanillaOptionParams().isOptionTypeCall()) {
+        if (option.getVanillaOptionParams().isOptionTypeCall()) {
             indexes[1] = (index % 2 == 0 ? 0 : -1);
         } else {
             indexes[1] = (index % 2 == 0 ? -1 : 0);
@@ -81,7 +80,7 @@ class DoubleBarrierCalculator {
         // index of lower barrier price; (1, 2, 3, 4)->(-2i, -2i, 2i+2, 2i+2)
         indexes[3] = (index <= 2 ? (-2 * i) : (2 * i + 2));
         // index of curve barrier price; (1, 2, 3, 4)->(0, -1, 0, -1) or (-1, 0, -1, 0)
-        if(option.getVanillaOptionParams().isOptionTypeCall()) {
+        if (option.getVanillaOptionParams().isOptionTypeCall()) {
             indexes[4] = (index % 2 == 0 ? -1 : 0);
         } else {
             indexes[4] = (index % 2 == 0 ? 0 : -1);
@@ -96,7 +95,7 @@ class DoubleBarrierCalculator {
         double l = option.getBarrierOptionParams().getLowerBarrierPrice();
         double f = upperCurvePrice();
         double g = lowerCurvePrice();
-        if(option.getVanillaOptionParams().isOptionTypeCall()) {
+        if (option.getVanillaOptionParams().isOptionTypeCall()) {
             return new double[]{Math.log(s), Math.log(k), Math.log(u), Math.log(l), Math.log(f)};
         } else {
             return new double[]{Math.log(s), Math.log(k), Math.log(u), Math.log(l), Math.log(g)};
@@ -159,17 +158,18 @@ class DoubleBarrierCalculator {
             positiveAdd = indexOfOptionType * (part1(i) + part2(i));
             negativeAdd = indexOfOptionType * (part1(-i) + part2(-i));
             price = price + positiveAdd + negativeAdd;
-            if(Math.abs(positiveAdd + negativeAdd) < tol) {
+            if (Math.abs(positiveAdd + negativeAdd) < tol) {
                 return price;
             }
         }
         return price;
     }
 }
+
 /**
  * @author liangcy
  */
-public class DoubleBarrierOption extends BaseSingleOption implements Serializable{
+public class DoubleBarrierOption extends BaseSingleOption implements Serializable {
 
     private BarrierOptionParams barrierOptionParams;
 
@@ -197,7 +197,7 @@ public class DoubleBarrierOption extends BaseSingleOption implements Serializabl
         for (int i = 0; i < pricePath.length; i++) {
             double price = pricePath[i];
             double t = timePoints[i];
-            if(price < l * Math.exp(lCurve * t) || price > u * Math.exp(uCurve * t)) {
+            if (price < l * Math.exp(lCurve * t) || price > u * Math.exp(uCurve * t)) {
                 return barrierOptionParams.isIn() ? option.monteCarloPrice(pricePath) : 0;
             }
         }
@@ -206,7 +206,7 @@ public class DoubleBarrierOption extends BaseSingleOption implements Serializabl
 
     @Override
     public double bsm() {
-        if(getBarrierOptionParams().isIn()) {
+        if (getBarrierOptionParams().isIn()) {
             return europeanVanillaPrice() - bsmOut();
         } else {
             return bsmOut();
@@ -221,7 +221,7 @@ public class DoubleBarrierOption extends BaseSingleOption implements Serializabl
     private double bsmOut() {
         DoubleBarrierCalculator calculator = new DoubleBarrierCalculator();
         calculator.setOption(this);
-        if(isTouchBarrier()) {
+        if (isTouchBarrier()) {
             return 0;
         }
         return calculator.outPrice();

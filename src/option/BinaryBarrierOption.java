@@ -66,7 +66,7 @@ class BinaryBarrierCalculator {
     }
 
     private double yita() {
-        if(option.getBarrierOptionParams().isUp()) {
+        if (option.getBarrierOptionParams().isUp()) {
             return -1.0;
         } else {
             return 1.0;
@@ -108,16 +108,20 @@ class BinaryBarrierCalculator {
                 CalculateUtil.normalCDF(yita() * y2() - yita() * sigmaT());
     }
 }
+
 /**
  * (美式)障碍二元期权;没有执行价;
  * 触碰障碍根据障碍类型和给付时间计算收益;不会转为普通二元期权;
+ *
  * @author liangcy
  */
 public class BinaryBarrierOption extends BaseSingleOption implements Serializable {
-    public BinaryBarrierOption() {}
+    public BinaryBarrierOption() {
+    }
 
     /**
      * 计算障碍期权回扣值的构造函数,;
+     *
      * @param option 障碍期权
      */
     BinaryBarrierOption(BarrierOption option) {
@@ -152,7 +156,7 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
      * 美式期权不分看涨看跌, 为了计算方便将向上的期权设置成看涨, 向下的期权设置成看跌;
      */
     public void refreshOptionType() {
-        if(barrierOptionParams.isUp()) {
+        if (barrierOptionParams.isUp()) {
             getVanillaOptionParams().setOptionType(OPTION_TYPE_CALL);
         } else {
             getVanillaOptionParams().setOptionType(OPTION_TYPE_PUT);
@@ -160,7 +164,6 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
     }
 
     /**
-     *
      * @param pricePath 蒙特卡洛模拟路径
      * @return 触碰障碍时间, 如果未触碰, 返回0
      */
@@ -168,7 +171,7 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
         int n = pricePath.length;
         double[] timePoints = MonteCarlo.getTimePoints(getVanillaOptionParams().getTimeRemaining(), pricePath);
         for (int i = 0; i < n; i++) {
-            if(barrierOptionParams.isTouchSingleBarrier(pricePath[i])) {
+            if (barrierOptionParams.isTouchSingleBarrier(pricePath[i])) {
                 return timePoints[i];
             }
         }
@@ -186,15 +189,15 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
 
     @Override
     public double monteCarloPrice(double[] pricePath) {
-        if(barrierOptionParams.isPayAtHit()) {
+        if (barrierOptionParams.isPayAtHit()) {
             double hitTime = hitBarrierTime(pricePath);
-            if(!isHit(pricePath)) {
+            if (!isHit(pricePath)) {
                 return 0;
             }
             return cash * Math.exp(-hitTime * getUnderlying().getRiskFreeRate());
         } else {
             //如果敲入期权触碰障碍或者敲出期权未触碰障碍
-            if(isHit(pricePath) == barrierOptionParams.isIn()) {
+            if (isHit(pricePath) == barrierOptionParams.isIn()) {
                 return cash * getDiscountValueByRiskFreeRate();
             } else {
                 return 0;
@@ -206,10 +209,10 @@ public class BinaryBarrierOption extends BaseSingleOption implements Serializabl
     public double bsm() {
         BinaryBarrierCalculator calculator = new BinaryBarrierCalculator();
         calculator.setOption(this);
-        if(barrierOptionParams.isPayAtHit()) {
+        if (barrierOptionParams.isPayAtHit()) {
             return calculator.a() * cash;
         } else {
-            if(barrierOptionParams.isIn()) {
+            if (barrierOptionParams.isIn()) {
                 return (calculator.b2() + calculator.b4()) * cash;
             } else {
                 return (getDiscountValueByDividendRate() - calculator.b2() - calculator.b4()) * cash;

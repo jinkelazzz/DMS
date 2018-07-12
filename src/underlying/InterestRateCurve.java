@@ -5,6 +5,7 @@ import calculator.utility.Interpolation;
 /**
  * 利率曲线类
  * 利率的期限结构
+ *
  * @author liangcy
  */
 public class InterestRateCurve {
@@ -30,6 +31,7 @@ public class InterestRateCurve {
 
     /**
      * 插值计算任意时间点的利率
+     *
      * @param time 时间点
      * @return
      */

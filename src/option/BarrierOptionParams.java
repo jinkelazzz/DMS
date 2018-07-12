@@ -1,13 +1,13 @@
 package option;
 
 import calculator.utility.ConstantString;
+
 import java.io.Serializable;
 
 /**
- *
  * @author liangcy
  */
-public class BarrierOptionParams implements Serializable{
+public class BarrierOptionParams implements Serializable {
     private double barrierPrice;
     private String barrierType;
     private String barrierDirection;
@@ -103,7 +103,7 @@ public class BarrierOptionParams implements Serializable{
     }
 
     void swapInOut() {
-        if(isIn()) {
+        if (isIn()) {
             setBarrierType(BaseOption.BARRIER_TYPE_OUT);
         } else {
             setBarrierType(BaseOption.BARRIER_TYPE_IN);
@@ -123,12 +123,11 @@ public class BarrierOptionParams implements Serializable{
     }
 
     /**
-     *
      * @param spotPrice 标的资产价格
      * @return 是否触碰了障碍值
      */
     boolean isTouchSingleBarrier(double spotPrice) {
-        if(isUp()) {
+        if (isUp()) {
             return spotPrice > getBarrierPrice();
         } else {
             return spotPrice < getBarrierPrice();

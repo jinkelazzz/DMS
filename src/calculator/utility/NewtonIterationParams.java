@@ -4,8 +4,8 @@ package calculator.utility;
  * @author liangcy
  */
 public class NewtonIterationParams {
-    int iterations = 1000;
-    double tol = 1e-12;
+    private int iterations = 1000;
+    private double tol = 1e-12;
 
     public int getIterations() {
         return iterations;

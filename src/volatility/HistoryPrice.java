@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 /**
  * 用历史数据估计Heston参数。
+ *
  * @author liangcy
  */
 class HestonEstimation implements MaximisationFunction {
@@ -70,12 +71,12 @@ class HestonEstimation implements MaximisationFunction {
                     Math.pow(volVolatility, 2) * (1 - rho * rho) * dt;
 
             double bt;
-            if(b * b - c > 0) {
+            if (b * b - c > 0) {
                 vSeries[i + 1] = Math.sqrt(b * b - c) - b;
             } else {
                 bt = Math.pow(vSeries[i] - alpha * dt, 2) - 2 * rho * volVolatility * (vSeries[i] - alpha * dt) *
                         (diffPrice - mu * dt) + Math.pow(volVolatility * (diffPrice - mu * dt), 2) / denominator;
-                if(bt / a > 0) {
+                if (bt / a > 0) {
                     vSeries[i + 1] = Math.sqrt(bt / a);
                 } else {
                     vSeries[i + 1] = vSeries[i];
@@ -118,6 +119,7 @@ class HestonEstimation implements MaximisationFunction {
 
 /**
  * 用GARCH模型计算波动率
+ *
  * @author liangcy
  */
 class Garch implements MaximisationFunction {
@@ -178,6 +180,7 @@ class Garch implements MaximisationFunction {
         return Math.sqrt(dailyVariance);
     }
 }
+
 /**
  * @author liangcy
  */
@@ -255,7 +258,8 @@ public class HistoryPrice implements Serializable {
 
     /**
      * 计算滚动波动率, 返回波动率均值, 波动率的置信区间
-     * @param width 观察窗口宽度
+     *
+     * @param width           观察窗口宽度
      * @param confidenceLevel 置信度, 通常为0.05或者0.01;
      * @return
      */
@@ -274,8 +278,8 @@ public class HistoryPrice implements Serializable {
     }
 
     /**
-     * @reference Parkinson 1980;
      * @return volatility
+     * @reference Parkinson 1980;
      */
     public double highLowVolatility() {
         int n = high.length;
@@ -288,8 +292,8 @@ public class HistoryPrice implements Serializable {
     }
 
     /**
-     * @reference Garman, Klass 1980;
      * @return volatility
+     * @reference Garman, Klass 1980;
      */
     public double highLowCloseVolatility() {
         int n = close.length;
@@ -304,8 +308,8 @@ public class HistoryPrice implements Serializable {
     }
 
     /**
-     * @reference Rogers, Satchell, Yoon 1994;
      * @return volatility
+     * @reference Rogers, Satchell, Yoon 1994;
      */
     public double highLowOpenCloseVolatility() {
         int n = close.length;
@@ -320,8 +324,9 @@ public class HistoryPrice implements Serializable {
 
     /**
      * 利用收盘价估计GARCH volatility;
+     *
      * @param initialVol 即期波动率估计;
-     * @param t 这里的t不用年化;
+     * @param t          这里的t不用年化;
      * @return garch volatility, 其中long variance是历史方差
      */
     public double garchVolatility(double initialVol, double t) {
@@ -333,6 +338,7 @@ public class HistoryPrice implements Serializable {
 
     /**
      * 极大似然估计Heston参数
+     *
      * @param option 欧式期权, 初始化即期波动率用。
      * @return Heston参数(不估计lambda);
      * 同时估计即期波动率, 放在Heston下面option的波动率里面
@@ -344,7 +350,6 @@ public class HistoryPrice implements Serializable {
         estimation.setOption(option);
         return estimation.hestonEstimate();
     }
-
 
 
 }

@@ -4,19 +4,20 @@ import adjusted.european.option.Heston;
 import adjusted.european.option.Sabr;
 import calculator.utility.CalculateUtil;
 import flanagan.math.DeepCopy;
-import org.omg.CORBA.MARSHAL;
 import underlying.BaseUnderlying;
 import volatility.VolatilitySurface;
+
 import java.io.Serializable;
 
 /**
  * @author liangcy
  */
 public class EuropeanOption extends BaseSingleOption implements Serializable {
-    public EuropeanOption() {}
+    public EuropeanOption() {
+    }
 
     public EuropeanOption(BaseSingleOption option) {
-        if(option instanceof BinaryBarrierOption) {
+        if (option instanceof BinaryBarrierOption) {
             ((BinaryBarrierOption) option).refreshOptionType();
         }
         this.setUnderlying((BaseUnderlying) DeepCopy.copy(option.getUnderlying()));
@@ -69,9 +70,9 @@ public class EuropeanOption extends BaseSingleOption implements Serializable {
         double k = getVanillaOptionParams().getStrikePrice();
         double callPrice = s * getDiscountValueByDividendRate() * CalculateUtil.normalCDF(d1()) -
                 k * getDiscountValueByRiskFreeRate() * CalculateUtil.normalCDF(d2());
-        if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (getVanillaOptionParams().isOptionTypeCall()) {
             return callPrice;
-        }else {
+        } else {
             return callPrice - callLowerLimit();
         }
     }
@@ -126,11 +127,11 @@ public class EuropeanOption extends BaseSingleOption implements Serializable {
         double callPrice = 0.5 * s * getDiscountValueByDividendRate() -
                 0.5 * k * getDiscountValueByRiskFreeRate() + integration;
 
-        if(Double.isNaN(callPrice) || callPrice <= callLowerLimit()) {
+        if (Double.isNaN(callPrice) || callPrice <= callLowerLimit()) {
             callPrice = bsm();
         }
 
-        if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (getVanillaOptionParams().isOptionTypeCall()) {
             return callPrice;
         } else {
             return callPrice - callLowerLimit();

@@ -9,7 +9,7 @@ import flanagan.roots.RealRootDerivFunction;
 
 import java.io.Serializable;
 
-class BsCalculator{
+class BsCalculator {
     private AmericanOption option;
 
     void setOption(AmericanOption option) {
@@ -131,7 +131,7 @@ class BsCalculator{
         double s = option.getUnderlying().getSpotPrice();
         double k = option.getVanillaOptionParams().getStrikePrice();
 
-        if(shouldEarlyExercise()) {
+        if (shouldEarlyExercise()) {
             return s - k;
         }
 
@@ -173,7 +173,7 @@ class BawCalculator implements RealRootDerivFunction {
         double vol = option.getVanillaOptionParams().getVolatility();
         double t = option.getVanillaOptionParams().getTimeRemaining();
         double r = option.getUnderlying().getRiskFreeRate();
-        if(r == 0) {
+        if (r == 0) {
             return 2 / (vol * vol * t);
         } else {
             return 2 * r / (vol * vol * (1 - Math.exp(-r * t)));
@@ -222,7 +222,7 @@ class BawCalculator implements RealRootDerivFunction {
         double k = option.getVanillaOptionParams().getStrikePrice();
         //这里存boundary是为了只计算一次,提高计算速度
         double boundary = boundary();
-        if(shouldEarlyExercise(boundary)) {
+        if (shouldEarlyExercise(boundary)) {
             return s - k;
         }
         EuropeanOption europeanOption = new EuropeanOption(option);
@@ -257,10 +257,11 @@ class BawCalculator implements RealRootDerivFunction {
         return y;
     }
 }
+
 /**
  * @author liangcy
  */
-public class AmericanOption extends BaseSingleOption implements Serializable{
+public class AmericanOption extends BaseSingleOption implements Serializable {
 
     @Override
     public boolean isEarlyExercise() {
@@ -270,6 +271,7 @@ public class AmericanOption extends BaseSingleOption implements Serializable{
 
     /**
      * 其实这里是baw模型
+     *
      * @return baw()
      */
     @Override
@@ -295,16 +297,17 @@ public class AmericanOption extends BaseSingleOption implements Serializable{
 
     /**
      * Barone-Adesi and Whaley 1987
+     *
      * @return price
      */
     public double baw() {
         //put -> call
-        if(!getVanillaOptionParams().isOptionTypeCall()) {
+        if (!getVanillaOptionParams().isOptionTypeCall()) {
             AmericanOption option = callPutTransform();
             return option.baw();
         }
         //无分红的call不应提前行权
-        if(getUnderlying().getDividendRate() <= 0) {
+        if (getUnderlying().getDividendRate() <= 0) {
             EuropeanOption option = new EuropeanOption(this);
             return option.bsm();
         }
@@ -316,16 +319,17 @@ public class AmericanOption extends BaseSingleOption implements Serializable{
 
     /**
      * Bjerksund and Stensland 2002
+     *
      * @return 美式期权的下界
      */
     public double bs() {
         //put -> call
-        if(!getVanillaOptionParams().isOptionTypeCall()) {
+        if (!getVanillaOptionParams().isOptionTypeCall()) {
             AmericanOption option = callPutTransform();
             return option.bs();
         }
         //无分红的call不应提前行权
-        if(getUnderlying().getDividendRate() <= 0) {
+        if (getUnderlying().getDividendRate() <= 0) {
             EuropeanOption option = new EuropeanOption(this);
             return option.bsm();
         }

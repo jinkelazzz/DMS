@@ -1,14 +1,18 @@
 package test;
 
-import calculator.derivatives.*;
-import calculator.utility.FiniteDifference;
+import calculator.derivatives.SingleOptionAnalysisCalculator;
+import calculator.derivatives.SingleOptionFiniteDifferenceCalculator;
+import calculator.derivatives.SingleOptionMonteCarloCalculator;
 import option.*;
-import org.junit.*;
-import underlying.*;
+import org.junit.Assert;
+import org.junit.Test;
+import underlying.BaseUnderlying;
+import underlying.Future;
+import underlying.Spot;
 
-import static test.CalculatorCase.*;
-import static test.UnderlyingCase.*;
-import static test.SingleOptionCase.*;
+import static test.CalculatorCase.finiteDifferenceCalculator;
+import static test.SingleOptionCase.americanOption;
+import static test.UnderlyingCase.spot;
 
 class CalculatorCase {
     static SingleOptionFiniteDifferenceCalculator finiteDifferenceCalculator =

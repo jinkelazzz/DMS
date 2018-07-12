@@ -6,13 +6,13 @@ import flanagan.math.VectorMaths;
 import option.EuropeanOption;
 
 /**
+ * @author liangcy
  * @reference Hagan, Kumar, Lesniewski, Woodward (2002)
  * adjust option price when underlying is future;
  * dF = alpha * F ^ beta * dz;
  * d(alpha) = volVol * alpha * dw;
  * E[dz, dw] = rho * dt;
  * alpha is estimated by using ATM vol, see West (2005)
- * @author liangcy
  */
 public class Sabr {
     private EuropeanOption option;
@@ -59,18 +59,18 @@ public class Sabr {
     }
 
     private double xz() {
-        return Math.log((Math.sqrt(1 - 2 * rho * z() + z() * z()) + z() - rho)/(1 - rho));
+        return Math.log((Math.sqrt(1 - 2 * rho * z() + z() * z()) + z() - rho) / (1 - rho));
     }
 
     private double findRoot(Complex[] roots) {
         double minPositiveRoot = Double.MAX_VALUE;
         for (Complex root : roots) {
             //寻找最小正实根
-            if(root.getImag() == 0 && root.getReal() > 0) {
+            if (root.getImag() == 0 && root.getReal() > 0) {
                 minPositiveRoot = Math.min(minPositiveRoot, root.getReal());
             }
         }
-        if(Double.MAX_VALUE == minPositiveRoot) {
+        if (Double.MAX_VALUE == minPositiveRoot) {
             return 0;
         } else {
             return minPositiveRoot;
@@ -101,22 +101,22 @@ public class Sabr {
         double quadratic = polynomialParams()[2];
         double linear = polynomialParams()[1];
         double constant = polynomialParams()[0];
-        if(cubic != 0) {
+        if (cubic != 0) {
             Complex[] roots = Polynomial.cubic(constant, linear, quadratic, cubic);
             return findRoot(roots);
         }
-        if(quadratic != 0) {
+        if (quadratic != 0) {
             Complex[] roots = Polynomial.quadratic(constant, linear, quadratic);
             return findRoot(roots);
         }
-        if(linear != 0) {
+        if (linear != 0) {
             return -constant / linear;
         }
         return 0;
     }
 
     private double volAtMoney() {
-        if(option.getVolatilitySurface() == null) {
+        if (option.getVolatilitySurface() == null) {
             return option.getVanillaOptionParams().getVolatility();
         } else {
             return option.getVolatilitySurface().getVolatility(1.0, option.getVanillaOptionParams().getTimeRemaining());
@@ -125,7 +125,7 @@ public class Sabr {
 
     public double sabrVolatility() {
         double a = solveAlpha();
-        if(a == 0) {
+        if (a == 0) {
             return option.getVanillaOptionParams().getVolatility();
         }
         VectorMaths aVec = new VectorMaths(new double[]{0, a, a * a, a * a * a});

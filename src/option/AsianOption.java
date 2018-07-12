@@ -8,6 +8,7 @@ import flanagan.math.Maximisation;
 import flanagan.math.MaximisationFunction;
 import underlying.Future;
 import volatility.VolatilitySurface;
+
 import java.io.Serializable;
 
 class CurranCalculator implements MaximisationFunction {
@@ -77,7 +78,7 @@ class CurranCalculator implements MaximisationFunction {
 /**
  * @author liangcy
  */
-public class AsianOption extends BaseSingleOption implements Serializable{
+public class AsianOption extends BaseSingleOption implements Serializable {
 
     private double pastTime = 0.0;
     private double pastAvgPrice = 0.0;
@@ -109,6 +110,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
 
     /**
      * 要对strike进行转换
+     *
      * @return 转换后的strike
      */
     double transformStrike() {
@@ -137,7 +139,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
         double[] futureVolPoints = new double[observeTimePoints.length];
         double[] futurePricePoints = generateFuturePricePoints();
         double k = getVanillaOptionParams().getStrikePrice();
-        if(null == getVolatilitySurface()) {
+        if (null == getVolatilitySurface()) {
             setVolatilitySurface(new VolatilitySurface(getVanillaOptionParams().getVolatility()));
         }
         for (int i = 0; i < observeTimePoints.length; i++) {
@@ -188,13 +190,14 @@ public class AsianOption extends BaseSingleOption implements Serializable{
 
     /**
      * Turnbull & Wakeman 1991;
+     *
      * @return option price
      */
     @Override
     public double bsm() {
         double k = transformStrike();
-        if(k <= 0) {
-            if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (k <= 0) {
+            if (getVanillaOptionParams().isOptionTypeCall()) {
                 return multi() * (m1() - k) * getDiscountValueByRiskFreeRate();
             } else {
                 return 0;
@@ -205,7 +208,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
         double t = getVanillaOptionParams().getTimeRemaining();
         double m = m2() / (m1() * m1());
         double aVol;
-        if(m <= 1) {
+        if (m <= 1) {
             aVol = vol / Math.sqrt(3.0);
         } else {
             aVol = Math.sqrt(Math.log(m) / t);
@@ -222,12 +225,13 @@ public class AsianOption extends BaseSingleOption implements Serializable{
 
     /**
      * curran 1992;
+     *
      * @return option price
      */
     public double curran() {
         double k = transformStrike();
-        if(k <= 0) {
-            if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (k <= 0) {
+            if (getVanillaOptionParams().isOptionTypeCall()) {
                 return multi() * (m1() - k) * getDiscountValueByRiskFreeRate();
             } else {
                 return 0;
@@ -237,7 +241,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
         CurranCalculator curranCalculator = new CurranCalculator();
         curranCalculator.setAsianOption(this);
         double curranPrice = curranCalculator.curranPrice();
-        if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (getVanillaOptionParams().isOptionTypeCall()) {
             return multi() * curranPrice;
         } else {
             // asian call put parity;
@@ -247,6 +251,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
 
     /**
      * 蒙特卡洛模拟路径的时间点可能和实际观察时间点不匹配, 利用线性插值取得观察时间点的价格;
+     *
      * @param pricePath 蒙特卡洛模拟路径
      * @return 计算蒙特卡洛模拟underlying price均值
      */
@@ -271,7 +276,7 @@ public class AsianOption extends BaseSingleOption implements Serializable{
         double sAvg = calculateAvgPriceWithMonteCarloPath(pricePath);
         //这里的strike不用转换
         double k = getVanillaOptionParams().getStrikePrice();
-        if(getVanillaOptionParams().isOptionTypeCall()) {
+        if (getVanillaOptionParams().isOptionTypeCall()) {
             return Math.max(sAvg - k, 0.0) * getDiscountValueByRiskFreeRate();
         } else {
             return Math.max(k - sAvg, 0.0) * getDiscountValueByRiskFreeRate();

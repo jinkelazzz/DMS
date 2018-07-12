@@ -4,6 +4,7 @@ import calculator.utility.CalculateUtil;
 import flanagan.math.DeepCopy;
 import flanagan.math.Maximisation;
 import flanagan.math.MaximisationFunction;
+
 import java.io.Serializable;
 
 
@@ -32,7 +33,7 @@ class SpreadOptionCalculator implements MaximisationFunction {
         double d3 = (logMoneyness + (-vol1 * vol1 / 2 + bVol2 * bVol2 / 2) * t) / sigmaT;
         double callPrice = spreadOption.getOption1().getDiscountValueByRiskFreeRate()
                 * (f1 * CalculateUtil.normalCDF(d1) - f2 * CalculateUtil.normalCDF(d2) - k * CalculateUtil.normalCDF(d3));
-        if(spreadOption.getOption1().getVanillaOptionParams().isOptionTypeCall()) {
+        if (spreadOption.getOption1().getVanillaOptionParams().isOptionTypeCall()) {
             return callPrice;
         } else {
             return callPrice - spreadOption.getOption1().getDiscountValueByRiskFreeRate() * (f1 - f2 - k);
@@ -61,7 +62,7 @@ class SpreadOptionCalculator implements MaximisationFunction {
 /**
  * @author liangcy
  */
-public class SpreadOption extends BaseDoubleOption implements Serializable{
+public class SpreadOption extends BaseDoubleOption implements Serializable {
 
     @Override
     public void setOption2(BaseSingleOption option) {
@@ -85,7 +86,7 @@ public class SpreadOption extends BaseDoubleOption implements Serializable{
     public double bsm() {
         double k = getOption1().getVanillaOptionParams().getStrikePrice();
         SpreadOptionCalculator calculator = new SpreadOptionCalculator();
-        if(k < 0) {
+        if (k < 0) {
             calculator.setSpreadOption(transform());
         } else {
             calculator.setSpreadOption(this);

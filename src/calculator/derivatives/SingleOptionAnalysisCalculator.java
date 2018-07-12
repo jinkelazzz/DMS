@@ -7,6 +7,7 @@ import option.BaseSingleOption;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import static calculator.utility.CalculatorError.*;
 
 /**
@@ -14,6 +15,7 @@ import static calculator.utility.CalculatorError.*;
  */
 class ImpliedVolFunction implements RealRootDerivFunction {
     private BaseSingleOption option;
+
     public void setOption(BaseSingleOption option) {
         this.option = option;
     }
@@ -35,6 +37,7 @@ class ImpliedVolFunction implements RealRootDerivFunction {
 
 /**
  * 计算解析解的价格, Greeks, implied volatility.
+ *
  * @author liangcy
  */
 public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
@@ -48,11 +51,10 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
     }
 
     /**
-     *
      * @return 获取对象的方法，先检查自身的方法，再检查继承来的方法
      * @throws NoSuchMethodException
      */
-    private Method getMethod() throws NoSuchMethodException{
+    private Method getMethod() throws NoSuchMethodException {
         Class<?> c = option.getClass();
         String methodName = option.getVanillaOptionParams().getMethodName();
         try {
@@ -64,11 +66,11 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
 
     /**
      * 根据方法来获取结果。
+     *
      * @param method 方法
      * @return 根据方法计算的价格。
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     *
      */
     private double getPrice(Method method) throws InvocationTargetException, IllegalAccessException {
         return (double) method.invoke(option);
@@ -100,19 +102,19 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         realRoot.setUpperBound(upperLimit);
         //迭代初值
         double estimateVol = option.getVanillaOptionParams().getVolatility();
-        if(estimateVol <= lowerLimit || estimateVol >= upperLimit) {
+        if (estimateVol <= lowerLimit || estimateVol >= upperLimit) {
             estimateVol = getInitialVol();
         }
         realRoot.setEstimate(estimateVol);
         try {
             double root = realRoot.bisectNewtonRaphson(function);
             //root是NaN,计算失败
-            if(Double.isNaN(root)) {
+            if (Double.isNaN(root)) {
                 setError(CALCULATE_NAN);
                 return;
             }
             //达到迭代上限
-            if(realRoot.getIterN() > realRoot.getIterMax()) {
+            if (realRoot.getIterN() > realRoot.getIterMax()) {
                 setResult(root);
                 setError(REACH_MAX_ITERATION);
                 return;
@@ -142,7 +144,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
 
         try {
             double price = getPrice(method);
-            if(Double.isNaN(price)) {
+            if (Double.isNaN(price)) {
                 setError(CALCULATE_NAN);
                 return;
             }
@@ -163,7 +165,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         double upperSpotPrice = diffSpotPrice[1];
         option.getUnderlying().setSpotPrice(upperSpotPrice);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double upperPrice = getResult();
@@ -171,7 +173,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         double lowerSpotPrice = diffSpotPrice[0];
         option.getUnderlying().setSpotPrice(lowerSpotPrice);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double lowerPrice = getResult();
@@ -179,7 +181,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         //reset underlying price;
         option.getUnderlying().setSpotPrice(s);
         double delta = (upperPrice - lowerPrice) / (upperSpotPrice - lowerSpotPrice);
-        if(Double.isNaN(delta)) {
+        if (Double.isNaN(delta)) {
             setError(CALCULATE_NAN);
             return;
         }
@@ -197,7 +199,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         double upperVol = diffVol[1];
         option.getVanillaOptionParams().setVolatility(upperVol);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double upperPrice = getResult();
@@ -205,7 +207,7 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         double lowerVol = diffVol[0];
         option.getVanillaOptionParams().setVolatility(lowerVol);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double lowerPrice = getResult();
@@ -225,14 +227,14 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
 
         option.getVanillaOptionParams().setTimeRemaining(diffTime[0]);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double lowerPrice = getResult();
 
         option.getVanillaOptionParams().setTimeRemaining(t);
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double price = getResult();
@@ -251,14 +253,14 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
 
         option.getUnderlying().setSpotPrice(diffSpotPrice[1]);
         calculateDelta();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double upperDelta = getResult();
 
         option.getUnderlying().setSpotPrice(diffSpotPrice[0]);
         calculateDelta();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double lowerDelta = getResult();
@@ -277,14 +279,14 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
 
         option.getUnderlying().setRiskFreeRate(r * (1 + rhoPrecision));
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double upperPrice = getResult();
 
         option.getUnderlying().setRiskFreeRate(r * (1 - rhoPrecision));
         calculatePrice();
-        if(!isNormal()) {
+        if (!isNormal()) {
             return;
         }
         double lowerPrice = getResult();
@@ -294,8 +296,6 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
         setResult(rho);
         setError(NORMAL);
     }
-
-
 
 
 }

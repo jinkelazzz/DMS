@@ -8,17 +8,18 @@ import option.EuropeanOption;
 
 import java.io.Serializable;
 
+
 /**
  * @author liangcy
  */
-public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalculator implements Serializable{
+public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalculator implements Serializable {
 
     private FiniteDifference finiteDifference = new FiniteDifference();
 
     @Override
     public void calculatePrice() {
         resetCalculator();
-        if(!option.hasFiniteDifferenceMethod()) {
+        if (!option.hasFiniteDifferenceMethod()) {
             setError(CalculatorError.UNSUPPORTED_METHOD);
             return;
         }
@@ -28,7 +29,6 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
     }
 
     /**
-     *
      * @return n * m matrix;第一行是时刻为0时期权价格向量, 最后一行是时刻为t时期权价格向量;
      * 期权价格向量根据标的资产价格从小到大排列;
      */
@@ -48,13 +48,12 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
         for (int i = 1; i < n; i++) {
             optionPriceMat = CalculateUtil.generateOneColMatrix(result[n - i]);
             result[n - i - 1] = params.times(optionPriceMat).getColumnCopy(0);
-            if(option.isEarlyExercise()) {
+            if (option.isEarlyExercise()) {
                 result[n - i - 1] = CalculateUtil.maxVector(result[n - i - 1], exercisePrice);
             }
         }
         return result;
     }
-
 
     @Override
     public void calculateImpliedVolatility() {
@@ -65,7 +64,7 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
     @Override
     public void calculateDelta() {
         resetCalculator();
-        if(!option.hasFiniteDifferenceMethod()) {
+        if (!option.hasFiniteDifferenceMethod()) {
             setError(CalculatorError.UNSUPPORTED_METHOD);
             return;
         }
@@ -82,20 +81,48 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
 
     @Override
     public void calculateVega() {
+        resetCalculator();
+        if (!option.hasFiniteDifferenceMethod()) {
+            setError(CalculatorError.UNSUPPORTED_METHOD);
+            return;
+        }
+        double vol = option.getVanillaOptionParams().getVolatility();
+        double vegaPrecision = option.getPrecision().getVegaPrecision();
+        double[] diffVol = CalculateUtil.midDiffValue(vol, vegaPrecision);
 
+        double upperVol = diffVol[1];
+        option.getVanillaOptionParams().setVolatility(upperVol);
+        calculatePrice();
+        if (!isNormal()) {
+            return;
+        }
+        double upperPrice = getResult();
+
+        double lowerVol = diffVol[0];
+        option.getVanillaOptionParams().setVolatility(lowerVol);
+        calculatePrice();
+        if (!isNormal()) {
+            return;
+        }
+        double lowerPrice = getResult();
+
+        option.getVanillaOptionParams().setVolatility(vol);
+        double vega = (upperPrice - lowerPrice) / (upperVol - lowerVol) / 100;
+        setResult(vega);
+        setError(CalculatorError.NORMAL);
     }
 
     @Override
     public void calculateTheta() {
         resetCalculator();
-        if(!option.hasFiniteDifferenceMethod()) {
+        if (!option.hasFiniteDifferenceMethod()) {
             setError(CalculatorError.UNSUPPORTED_METHOD);
             return;
         }
-        double price1 = optionPriceMatrix()[0][finiteDifference.getIndexOfInitialSpot()];
-        double price2 = optionPriceMatrix()[1][finiteDifference.getIndexOfInitialSpot()];
+        double priceT0 = optionPriceMatrix()[0][finiteDifference.getIndexOfInitialSpot()];
+        double priceT1 = optionPriceMatrix()[1][finiteDifference.getIndexOfInitialSpot()];
 
-        double theta = (price2 - price1) / finiteDifference.getDiffTime() / 365;
+        double theta = (priceT1 - priceT0) / finiteDifference.getDiffTime() / 365;
         setResult(theta);
         setError(CalculatorError.NORMAL);
     }
@@ -103,7 +130,7 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
     @Override
     public void calculateGamma() {
         resetCalculator();
-        if(!option.hasFiniteDifferenceMethod()) {
+        if (!option.hasFiniteDifferenceMethod()) {
             setError(CalculatorError.UNSUPPORTED_METHOD);
             return;
         }
@@ -130,9 +157,38 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
 
     @Override
     public void calculateRho() {
+        resetCalculator();
+        if (!option.hasFiniteDifferenceMethod()) {
+            setError(CalculatorError.UNSUPPORTED_METHOD);
+            return;
+        }
 
+        double r = option.getUnderlying().getRiskFreeRate();
+        double rhoPrecision = option.getPrecision().getRhoPrecision();
+
+        option.getUnderlying().setRiskFreeRate(r * (1 + rhoPrecision));
+        calculatePrice();
+        if (!isNormal()) {
+            return;
+        }
+        double upperPrice = getResult();
+
+        option.getUnderlying().setRiskFreeRate(r * (1 - rhoPrecision));
+        calculatePrice();
+        if (!isNormal()) {
+            return;
+        }
+        double lowerPrice = getResult();
+
+        option.getUnderlying().setRiskFreeRate(r);
+        double rho = (upperPrice - lowerPrice) / (r * rhoPrecision) / 10000;
+        setResult(rho);
+        setError(CalculatorError.NORMAL);
     }
 
+    /**
+     * @return 普通欧式期权解析解和数值解的误差
+     */
     public double getEuropeanOptionError() {
         EuropeanOption europeanOption = new EuropeanOption(option);
         SingleOptionFiniteDifferenceCalculator calculator = new SingleOptionFiniteDifferenceCalculator();

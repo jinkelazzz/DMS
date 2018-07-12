@@ -6,9 +6,10 @@ import java.io.Serializable;
 
 /**
  * 这里的underlying要服从几何布朗运动;例如现货、期货等
+ *
  * @author liangcy
  */
-public abstract class BaseUnderlying implements Serializable{
+public abstract class BaseUnderlying implements Serializable {
     private double spotPrice;
     private double riskFreeRate = 0.0;
     private double dividendRate = 0.0;
@@ -60,6 +61,9 @@ public abstract class BaseUnderlying implements Serializable{
     }
 
     @Override
+    /**
+     * 打印参数
+     */
     public abstract String toString();
 
 }

@@ -4,15 +4,16 @@ import flanagan.complex.Complex;
 import flanagan.integration.IntegralFunction;
 import flanagan.integration.Integration;
 import option.EuropeanOption;
+
 import java.io.Serializable;
 
 /**
+ * @author liangcy
  * @reference Heston 1993
  * d(ln(s)) = (r - q) * dt + vol * dw(1, t);
  * d(vol^2) = beta * (longVariance - vol^2) * dt + volVol * vol * dw(2, t);
  * E[w(1, t), w(2, t)] = rho * dt;
  * longVariance = longVolatility ^ 2;
- * @author liangcy
  */
 public class Heston implements IntegralFunction, Serializable {
 
@@ -91,7 +92,7 @@ public class Heston implements IntegralFunction, Serializable {
     }
 
     private double u(int index) {
-        if(index == 1) {
+        if (index == 1) {
             return 0.5;
         } else {
             return -0.5;
@@ -99,7 +100,7 @@ public class Heston implements IntegralFunction, Serializable {
     }
 
     private double b(int index) {
-        if(index == 1) {
+        if (index == 1) {
             return beta - rho * volVolatility;
         } else {
             return beta;
@@ -125,7 +126,7 @@ public class Heston implements IntegralFunction, Serializable {
         Complex complexOne = new Complex(1, 0);
         double t = option.getVanillaOptionParams().getTimeRemaining();
         Complex result;
-        if(volVolatility != 0) {
+        if (volVolatility != 0) {
             Complex part1 = (d(phi, index).minus(complexPhi.times(volVolatility).times(rho)).
                     plus(b(index))).over(volVolatility * volVolatility);
             // 1 - exp(d * t)
@@ -147,7 +148,7 @@ public class Heston implements IntegralFunction, Serializable {
         double r = option.getUnderlying().getRiskFreeRate();
         double q = option.getUnderlying().getDividendRate();
         Complex result;
-        if(volVolatility != 0) {
+        if (volVolatility != 0) {
             Complex part1 = complexPhi.times((r - q) * t);
             Complex part2 = (d(phi, index).minus(complexPhi.times(volVolatility).times(rho)).
                     plus(b(index))).times(t);
@@ -164,7 +165,7 @@ public class Heston implements IntegralFunction, Serializable {
     }
 
     private double hestonFun(double phi) {
-        if(phi == 0) {
+        if (phi == 0) {
             return 0.0;
         }
         double logSpotPrice = Math.log(option.getUnderlying().getSpotPrice());

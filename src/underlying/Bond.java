@@ -42,7 +42,7 @@ class CountDaysCalculator {
 
         startDay = Math.min(daysInOneMonth, startDay);
 
-        if(endDay > daysInOneMonth && startDay == daysInOneMonth) {
+        if (endDay > daysInOneMonth && startDay == daysInOneMonth) {
             endDay = daysInOneMonth;
         }
 
@@ -69,7 +69,7 @@ class CountDaysCalculator {
 /**
  * @author liangcy
  */
-public class Bond implements Serializable{
+public class Bond implements Serializable {
     /**
      * 计息日计算方式
      */
@@ -194,12 +194,11 @@ public class Bond implements Serializable{
     }
 
     /**
-     *
      * @return 下次付息日的下标; 如果找不到, 返回-1;
      */
     private int findIndexOfNextPayDate() {
         for (int i = 0; i < allDatesToPayInterest.length; i++) {
-            if(pricingDate.before(allDatesToPayInterest[i])) {
+            if (pricingDate.before(allDatesToPayInterest[i])) {
                 return i;
             }
         }
@@ -207,12 +206,11 @@ public class Bond implements Serializable{
     }
 
     /**
-     *
      * @return 上一次付息日到定价日的累计利息
      */
     public double getAccumulateInterest() {
         int indexOfNextPayDate = findIndexOfNextPayDate();
-        if(indexOfNextPayDate == -1) {
+        if (indexOfNextPayDate == -1) {
             return 0;
         }
         Calendar previousDate = (indexOfNextPayDate == 0 ? startDate : allDatesToPayInterest[indexOfNextPayDate - 1]);
@@ -223,23 +221,22 @@ public class Bond implements Serializable{
         calculator.setToday(pricingDate);
         double interest = interestToPay[indexOfNextPayDate];
         switch (countDaysMethod) {
-            case COUNT_DAYS_METHOD_ACT_ACT : {
+            case COUNT_DAYS_METHOD_ACT_ACT: {
                 return calculator.actAct() * interest;
             }
-            case COUNT_DAYS_METHOD_30_360 : {
+            case COUNT_DAYS_METHOD_30_360: {
                 return calculator.thirty360() * interest;
             }
-            case COUNT_DAYS_METHOD_ACT_360 : {
+            case COUNT_DAYS_METHOD_ACT_360: {
                 return calculator.act360() * interest;
             }
-            default : {
+            default: {
                 return 0;
             }
         }
     }
 
     /**
-     *
      * @return 现金价格(带息价格)
      */
     public double getDirtyPrice() {

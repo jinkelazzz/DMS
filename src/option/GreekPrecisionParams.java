@@ -1,11 +1,13 @@
 package option;
 
 import calculator.utility.ConstantNumber;
+
 import java.io.Serializable;
 
 /**
  * 设置Greeks计算精度
  * 默认值全部为万分之一
+ *
  * @author liangcy
  */
 public class GreekPrecisionParams implements Serializable {
@@ -24,7 +26,7 @@ public class GreekPrecisionParams implements Serializable {
     }
 
     public void setDeltaPrecision(double deltaPrecision) {
-        if(deltaPrecision > eps) {
+        if (deltaPrecision > eps) {
             this.deltaPrecision = deltaPrecision;
         }
     }
@@ -34,7 +36,7 @@ public class GreekPrecisionParams implements Serializable {
     }
 
     public void setGammaPrecision(double gammaPrecision) {
-        if(gammaPrecision > eps) {
+        if (gammaPrecision > eps) {
             this.gammaPrecision = gammaPrecision;
         }
     }
@@ -44,7 +46,7 @@ public class GreekPrecisionParams implements Serializable {
     }
 
     public void setVegaPrecision(double vegaPrecision) {
-        if(vegaPrecision > eps) {
+        if (vegaPrecision > eps) {
             this.vegaPrecision = vegaPrecision;
         }
     }
@@ -54,7 +56,7 @@ public class GreekPrecisionParams implements Serializable {
     }
 
     public void setThetaPrecision(double thetaPrecision) {
-        if(thetaPrecision > eps) {
+        if (thetaPrecision > eps) {
             this.thetaPrecision = thetaPrecision;
         }
     }
@@ -64,7 +66,7 @@ public class GreekPrecisionParams implements Serializable {
     }
 
     public void setRhoPrecision(double rhoPrecision) {
-        if(rhoPrecision > eps) {
+        if (rhoPrecision > eps) {
             this.rhoPrecision = rhoPrecision;
         }
     }

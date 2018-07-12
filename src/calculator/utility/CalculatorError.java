@@ -2,6 +2,7 @@ package calculator.utility;
 
 /**
  * 计算器错误枚举类
+ *
  * @author liangcy
  * @date 2018-06-15
  */
@@ -32,7 +33,7 @@ public enum CalculatorError {
      */
     CALCULATE_NAN(4),
     /**
-     * 不支持的方法, 例如蒙特卡洛计算隐含波动率
+     * 不支持的方法, 例如蒙特卡洛计算隐含波动率或者美式期权用蒙特卡洛计算
      */
     UNSUPPORTED_METHOD(5);
 

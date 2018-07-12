@@ -34,7 +34,7 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
     @Override
     public void calculatePrice() {
         resetCalculator();
-        if(!option.hasMonteCarloMethod()) {
+        if (!option.hasMonteCarloMethod()) {
             setError(CalculatorError.UNSUPPORTED_METHOD);
             return;
         }
@@ -55,7 +55,6 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
                 Math.sqrt(n));
         setError(CalculatorError.NORMAL);
     }
-
 
 
     @Override

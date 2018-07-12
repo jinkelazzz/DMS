@@ -18,7 +18,6 @@ public abstract class BaseCalculator {
     private double result = 0.0;
 
 
-
     public CalculatorError getError() {
         return error;
     }
