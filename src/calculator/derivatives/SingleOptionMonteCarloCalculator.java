@@ -1,10 +1,11 @@
 package calculator.derivatives;
 
-import calculator.utility.CalculatorError;
 import calculator.utility.MonteCarlo;
 import flanagan.analysis.Stat;
+import option.BaseSingleOption;
 
 import java.util.List;
+import static calculator.utility.CalculatorError.*;
 
 /**
  * @author liangcy
@@ -32,10 +33,15 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
     }
 
     @Override
+    public boolean hasMethod() {
+        return option.hasMonteCarloMethod();
+    }
+
+    @Override
     public void calculatePrice() {
         resetCalculator();
         if (!option.hasMonteCarloMethod()) {
-            setError(CalculatorError.UNSUPPORTED_METHOD);
+            setError(UNSUPPORTED_METHOD);
             return;
         }
         List<double[]> randomNumbersList = monteCarloParams.generateStandardNormalRandomNumberList();
@@ -53,14 +59,13 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
         double sd = Stat.standardError(resultList);
         setMonteCarloError(sd * monteCarloParams.getMonteCarloErrorMult() /
                 Math.sqrt(n));
-        setError(CalculatorError.NORMAL);
+        setError(NORMAL);
     }
-
 
     @Override
     public void calculateImpliedVolatility() {
         resetCalculator();
-        setError(CalculatorError.UNSUPPORTED_METHOD);
+        setError(UNSUPPORTED_METHOD);
     }
 
     @Override
@@ -71,8 +76,31 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
     }
 
     private void calculateDelta(List<double[]> randomNumbersList) {
+        resetCalculator();
+        BaseSingleOption[] options = shiftUnderlyingPrice();
+        BaseSingleOption lowerOption = options[0];
+        BaseSingleOption upperOption = options[1];
 
+        setOption(lowerOption);
+        calculatePrice(randomNumbersList);
+        if (!isNormal()) {
+            return;
+        }
+        double lowerPrice = getResult();
 
+        setOption(upperOption);
+        calculatePrice(randomNumbersList);
+        if (!isNormal()) {
+            return;
+        }
+        double upperPrice = getResult();
+        //reset;
+        setOption(option);
+        double lowerSpotPrice = lowerOption.getUnderlying().getSpotPrice();
+        double upperSpotPrice = upperOption.getUnderlying().getSpotPrice();
+        double delta = (upperPrice - lowerPrice) / (upperSpotPrice - lowerSpotPrice);
+        setResult(delta);
+        setError(NORMAL);
     }
 
     @Override
@@ -87,6 +115,7 @@ public class SingleOptionMonteCarloCalculator extends BaseSingleOptionCalculator
 
     @Override
     public void calculateGamma() {
+
 
     }
 

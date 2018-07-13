@@ -1,13 +1,11 @@
 package calculator.derivatives;
 
-import calculator.utility.CalculateUtil;
+import calculator.utility.NewtonIterationParams;
 import flanagan.roots.RealRoot;
 import flanagan.roots.RealRootDerivFunction;
 import option.BaseSingleOption;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import static calculator.utility.CalculatorError.*;
 
 /**
@@ -36,11 +34,19 @@ class ImpliedVolFunction implements RealRootDerivFunction {
 
 
 /**
- * 计算解析解的价格, Greeks, implied volatility.
- *
+ * 计算解析解的价格, implied volatility.
  * @author liangcy
  */
 public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
+
+    /**
+     * 牛顿迭代参数
+     */
+    private NewtonIterationParams iterParams = new NewtonIterationParams();
+
+    public void setIterParams(NewtonIterationParams iterParams) {
+        this.iterParams = iterParams;
+    }
 
     public SingleOptionAnalysisCalculator() {
         super();
@@ -61,6 +67,16 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
             return c.getDeclaredMethod(methodName);
         } catch (NoSuchMethodException e) {
             return c.getMethod(methodName);
+        }
+    }
+
+    @Override
+    public boolean hasMethod() {
+        try {
+            getMethod();
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 
@@ -154,148 +170,4 @@ public class SingleOptionAnalysisCalculator extends BaseSingleOptionCalculator {
             setError(CALCULATE_FAILED);
         }
     }
-
-    @Override
-    public void calculateDelta() {
-        resetCalculator();
-        double deltaPrecision = option.getPrecision().getDeltaPrecision();
-        double s = option.getUnderlying().getSpotPrice();
-        double[] diffSpotPrice = CalculateUtil.midDiffValue(s, deltaPrecision);
-
-        double upperSpotPrice = diffSpotPrice[1];
-        option.getUnderlying().setSpotPrice(upperSpotPrice);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double upperPrice = getResult();
-
-        double lowerSpotPrice = diffSpotPrice[0];
-        option.getUnderlying().setSpotPrice(lowerSpotPrice);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        //reset underlying price;
-        option.getUnderlying().setSpotPrice(s);
-        double delta = (upperPrice - lowerPrice) / (upperSpotPrice - lowerSpotPrice);
-        if (Double.isNaN(delta)) {
-            setError(CALCULATE_NAN);
-            return;
-        }
-        setResult(delta);
-        setError(NORMAL);
-    }
-
-    @Override
-    public void calculateVega() {
-        resetCalculator();
-        double vol = option.getVanillaOptionParams().getVolatility();
-        double vegaPrecision = option.getPrecision().getVegaPrecision();
-        double[] diffVol = CalculateUtil.midDiffValue(vol, vegaPrecision);
-
-        double upperVol = diffVol[1];
-        option.getVanillaOptionParams().setVolatility(upperVol);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double upperPrice = getResult();
-
-        double lowerVol = diffVol[0];
-        option.getVanillaOptionParams().setVolatility(lowerVol);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        option.getVanillaOptionParams().setVolatility(vol);
-        double vega = (upperPrice - lowerPrice) / (upperVol - lowerVol) / 100;
-        setResult(vega);
-        setError(NORMAL);
-    }
-
-    @Override
-    public void calculateTheta() {
-        resetCalculator();
-        double thetaPrecision = option.getPrecision().getThetaPrecision();
-        double t = option.getVanillaOptionParams().getTimeRemaining();
-        double[] diffTime = CalculateUtil.backwardDiffValue(t, thetaPrecision);
-
-        option.getVanillaOptionParams().setTimeRemaining(diffTime[0]);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        option.getVanillaOptionParams().setTimeRemaining(t);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double price = getResult();
-
-        double theta = (lowerPrice - price) / (t * thetaPrecision) / 365;
-        setResult(theta);
-        setError(NORMAL);
-    }
-
-    @Override
-    public void calculateGamma() {
-        resetCalculator();
-        double gammaPrecision = option.getPrecision().getGammaPrecision();
-        double s = option.getUnderlying().getSpotPrice();
-        double[] diffSpotPrice = CalculateUtil.midDiffValue(s, gammaPrecision);
-
-        option.getUnderlying().setSpotPrice(diffSpotPrice[1]);
-        calculateDelta();
-        if (!isNormal()) {
-            return;
-        }
-        double upperDelta = getResult();
-
-        option.getUnderlying().setSpotPrice(diffSpotPrice[0]);
-        calculateDelta();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerDelta = getResult();
-
-        option.getUnderlying().setSpotPrice(s);
-        double gamma = (upperDelta - lowerDelta) / (s * gammaPrecision);
-        setResult(gamma);
-        setError(NORMAL);
-    }
-
-    @Override
-    public void calculateRho() {
-        resetCalculator();
-        double r = option.getUnderlying().getRiskFreeRate();
-        double rhoPrecision = option.getPrecision().getRhoPrecision();
-
-        option.getUnderlying().setRiskFreeRate(r * (1 + rhoPrecision));
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double upperPrice = getResult();
-
-        option.getUnderlying().setRiskFreeRate(r * (1 - rhoPrecision));
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        option.getUnderlying().setRiskFreeRate(r);
-        double rho = (upperPrice - lowerPrice) / (r * rhoPrecision) / 10000;
-        setResult(rho);
-        setError(NORMAL);
-    }
-
-
 }

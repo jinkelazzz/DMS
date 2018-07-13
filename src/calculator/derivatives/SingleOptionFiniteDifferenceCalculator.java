@@ -5,7 +5,6 @@ import calculator.utility.CalculatorError;
 import calculator.utility.FiniteDifference;
 import flanagan.math.Matrix;
 import option.EuropeanOption;
-
 import java.io.Serializable;
 
 
@@ -15,6 +14,11 @@ import java.io.Serializable;
 public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalculator implements Serializable {
 
     private FiniteDifference finiteDifference = new FiniteDifference();
+
+    @Override
+    public boolean hasMethod() {
+        return option.hasFiniteDifferenceMethod();
+    }
 
     @Override
     public void calculatePrice() {
@@ -80,39 +84,6 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
     }
 
     @Override
-    public void calculateVega() {
-        resetCalculator();
-        if (!option.hasFiniteDifferenceMethod()) {
-            setError(CalculatorError.UNSUPPORTED_METHOD);
-            return;
-        }
-        double vol = option.getVanillaOptionParams().getVolatility();
-        double vegaPrecision = option.getPrecision().getVegaPrecision();
-        double[] diffVol = CalculateUtil.midDiffValue(vol, vegaPrecision);
-
-        double upperVol = diffVol[1];
-        option.getVanillaOptionParams().setVolatility(upperVol);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double upperPrice = getResult();
-
-        double lowerVol = diffVol[0];
-        option.getVanillaOptionParams().setVolatility(lowerVol);
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        option.getVanillaOptionParams().setVolatility(vol);
-        double vega = (upperPrice - lowerPrice) / (upperVol - lowerVol) / 100;
-        setResult(vega);
-        setError(CalculatorError.NORMAL);
-    }
-
-    @Override
     public void calculateTheta() {
         resetCalculator();
         if (!option.hasFiniteDifferenceMethod()) {
@@ -152,37 +123,6 @@ public class SingleOptionFiniteDifferenceCalculator extends BaseSingleOptionCalc
                 (underlyingPriceList[upperIndex1] - underlyingPriceList[lowerIndex1]);
 
         setResult(gamma);
-        setError(CalculatorError.NORMAL);
-    }
-
-    @Override
-    public void calculateRho() {
-        resetCalculator();
-        if (!option.hasFiniteDifferenceMethod()) {
-            setError(CalculatorError.UNSUPPORTED_METHOD);
-            return;
-        }
-
-        double r = option.getUnderlying().getRiskFreeRate();
-        double rhoPrecision = option.getPrecision().getRhoPrecision();
-
-        option.getUnderlying().setRiskFreeRate(r * (1 + rhoPrecision));
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double upperPrice = getResult();
-
-        option.getUnderlying().setRiskFreeRate(r * (1 - rhoPrecision));
-        calculatePrice();
-        if (!isNormal()) {
-            return;
-        }
-        double lowerPrice = getResult();
-
-        option.getUnderlying().setRiskFreeRate(r);
-        double rho = (upperPrice - lowerPrice) / (r * rhoPrecision) / 10000;
-        setResult(rho);
         setError(CalculatorError.NORMAL);
     }
 
