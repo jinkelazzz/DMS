@@ -93,6 +93,20 @@ public class VolatilitySurface implements Serializable {
         return calculator.getResult();
     }
 
+    public boolean isValidSurface() {
+        if(volSurface == null) {
+            return false;
+        }
+        int minLength = 5;
+        if(timeList.length < minLength || moneynessList.length < minLength) {
+            return false;
+        }
+        if(volSurface.length != moneynessList.length || volSurface[0].length != timeList.length) {
+            return false;
+        }
+        return true;
+    }
+
     public VolatilitySurface hestonVolatilitySurface(Heston heston, BaseUnderlying underlying,
                                                      double initialVolatility) {
         volSurface = new double[moneynessList.length][timeList.length];
