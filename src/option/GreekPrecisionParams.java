@@ -11,63 +11,43 @@ import java.io.Serializable;
  * @author liangcy
  */
 public class GreekPrecisionParams implements Serializable {
-    private double deltaPrecision = 1.0 / 10000;
-    private double gammaPrecision = 1.0 / 10000;
-    private double vegaPrecision = 1.0 / 10000;
-    private double thetaPrecision = 1.0 / 10000;
-    private double rhoPrecision = 1.0 / 10000;
-    /**
-     * 精度最小值
-     */
+
+    private double underlyingPricePrecision = 1e-4;
+    private double volatilityPrecision = 1e-4;
+    private double timeRemainingPrecision = 1e-4;
+    private double interestRatePrecision = 1e-4;
     private double eps = ConstantNumber.EPS * 2;
 
-    public double getDeltaPrecision() {
-        return deltaPrecision;
+    public double getUnderlyingPricePrecision() {
+        return underlyingPricePrecision;
     }
 
-    public void setDeltaPrecision(double deltaPrecision) {
-        if (deltaPrecision > eps) {
-            this.deltaPrecision = deltaPrecision;
-        }
+    public void setUnderlyingPricePrecision(double underlyingPricePrecision) {
+        this.underlyingPricePrecision = underlyingPricePrecision;
     }
 
-    public double getGammaPrecision() {
-        return gammaPrecision;
+    public double getVolatilityPrecision() {
+        return volatilityPrecision;
     }
 
-    public void setGammaPrecision(double gammaPrecision) {
-        if (gammaPrecision > eps) {
-            this.gammaPrecision = gammaPrecision;
-        }
+    public void setVolatilityPrecision(double volatilityPrecision) {
+        this.volatilityPrecision = volatilityPrecision;
     }
 
-    public double getVegaPrecision() {
-        return vegaPrecision;
+    public double getTimeRemainingPrecision() {
+        return timeRemainingPrecision;
     }
 
-    public void setVegaPrecision(double vegaPrecision) {
-        if (vegaPrecision > eps) {
-            this.vegaPrecision = vegaPrecision;
-        }
+    public void setTimeRemainingPrecision(double timeRemainingPrecision) {
+        this.timeRemainingPrecision = timeRemainingPrecision;
     }
 
-    public double getThetaPrecision() {
-        return thetaPrecision;
+    public double getInterestRatePrecision() {
+        return interestRatePrecision;
     }
 
-    public void setThetaPrecision(double thetaPrecision) {
-        if (thetaPrecision > eps) {
-            this.thetaPrecision = thetaPrecision;
-        }
+    public void setInterestRatePrecision(double interestRatePrecision) {
+        this.interestRatePrecision = interestRatePrecision;
     }
 
-    public double getRhoPrecision() {
-        return rhoPrecision;
-    }
-
-    public void setRhoPrecision(double rhoPrecision) {
-        if (rhoPrecision > eps) {
-            this.rhoPrecision = rhoPrecision;
-        }
-    }
 }
