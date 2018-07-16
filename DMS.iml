@@ -2,8 +2,8 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../DMS_V2">
-      <sourceFolder url="file://$MODULE_DIR$/../DMS_V2/src" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../DMS">
+      <sourceFolder url="file://$MODULE_DIR$/../DMS/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
